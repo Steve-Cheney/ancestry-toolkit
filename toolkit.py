@@ -1,7 +1,31 @@
 from collections import defaultdict
 from datetime import datetime
-from biopytk import sequenceBuilder as sb
-from biopytk import fasta_tk as ftk
+#From biopytk import fasta_tk as ftk
+
+def readFile(file):
+    """
+    Given a file, read and return the list of lines
+    \n<- file
+    \n-> str[]
+    """
+    with open(file, 'r') as f:
+            lines = f.readlines()
+    return lines
+
+def writeFile(input, outfile_name):
+    print('Writing to', outfile_name)
+    starttime = datetime.now()
+    with open(outfile_name, 'w') as fp:
+        if type(input) == str:
+            fp.write("%s" % input)
+        elif type(input) == list:
+            for line in input:
+                fp.write("%s\n" % line)
+    endtime = datetime.now()
+    mil = (endtime-starttime).total_seconds() * 1000
+    print(f'Completed in: {mil} ms')
+
+
 
 def toFASTA(ancestry_file, outfile_name = 'output_'+ datetime.now().strftime("%Y%m%d_%H%M%S")+'.fasta', al = 0):
     """
@@ -12,12 +36,12 @@ def toFASTA(ancestry_file, outfile_name = 'output_'+ datetime.now().strftime("%Y
     \n-> outfile_name.fasta
     """    
     assert al == 0 or al == 1 or al == 2 
-    lines = sb.readFile(ancestry_file)
+    lines = readFile(ancestry_file)
     for line in lines[:]:
         if line[0] == '#':
             lines.remove(line) # remove beginning comments
         if line[0] != '#':
-            print(line)
+            
             lines.remove(line) # remove the header line and break
             break
     allele1 = defaultdict(list)
@@ -52,9 +76,10 @@ def toFASTA(ancestry_file, outfile_name = 'output_'+ datetime.now().strftime("%Y
       
     
     if al == 0:
-        sb.writeFile([allele1_out, allele2_out], outfile_name)
+        writeFile([allele1_out, allele2_out], outfile_name)
     elif al == 1:
-        sb.writeFile(allele1_out, outfile_name)
+        writeFile(allele1_out, outfile_name)
     elif al == 2:    
-        sb.writeFile(allele2_out, outfile_name)
+        writeFile(allele2_out, outfile_name)
 
+toFASTA('AncestryDNA.txt')
