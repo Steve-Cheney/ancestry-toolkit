@@ -49,18 +49,21 @@ def toFASTA(ancestry_file, outfile_name = 'output_'+ datetime.now().strftime("%Y
     
     count = 0
     for line in lines:
-        count += 1
+        
+        
         stripped = line.strip()
         line_arr = stripped.split('\t')
         chromosome = line_arr[1]
         if chromosome not in allele1.keys():
             count = 0 # reset wrapping for new chr/label 
+        count += 1
         allele1[chromosome].append(line_arr[3].replace('0', '-')) # Ancestry deletions are represented by 0
         allele2[chromosome].append(line_arr[4].replace('0', '-'))
-        if count >= 60:
+        if count == 60:
             allele1[chromosome].append('\n')
             allele2[chromosome].append('\n')
             count = 0
+        
 
         
 
